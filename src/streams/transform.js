@@ -1,21 +1,16 @@
 //TODO transform.js - implement function that reads data from process.stdin, reverses text using Transform Stream and then writes it into process.stdout
 import { Transform } from 'stream';
-import { createWriteStream } from 'fs';
-
-class ReverseStream extends Transform {
-  constructor(options) {
-    super(options);
-  }
-  _read(n) {}
-}
 
 const transform = async () => {
   // Write your code here
-  const fileWriteStream = createWriteStream(
-    './src/streams/files/fileToWrite.txt'
-  );
   try {
-    process.stdin.on('data', data => {});
+    const reverseStream = new Transform({
+      transform(chunk, _, callback) {
+        this.push(chunk.toString().split('').reverse().join(''));
+        callback();
+      },
+    });
+    process.stdin.pipe(reverseStream).pipe(process.stdout);
   } catch (error) {
     throw new Error(error.message);
   }
